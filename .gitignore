@@ -1,0 +1,12 @@
+/.DS_Store
+/backend/.DS_Store
+/frontend/.DS_Store
+/backend/node_modules
+/frontend/node_modules
+/backend/.env.development
+/backend/.env.test
+/.vscode
+/backend/.vscode
+/frontend/.vscode
+yarn-error.log
+*.log
