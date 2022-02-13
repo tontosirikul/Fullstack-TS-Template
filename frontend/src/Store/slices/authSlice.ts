@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { setMessage } from "./messageSlice";
 import AuthService from "../../Services/AuthService";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
+const user = JSON.parse(localStorage.getItem("user") as string);
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -19,9 +19,8 @@ export const register = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const response = await AuthService.register(username, email, password);
-      thunkAPI.dispatch(setMessage(response.data.message));
-      return response.data;
+      const data = await AuthService.register(username, email, password);
+      thunkAPI.dispatch(setMessage(data.message));
     } catch (error: any) {
       const message =
         (error.response &&
@@ -64,6 +63,8 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 const initialState = user
   ? { isLoggedIn: true, user }
   : { isLoggedIn: false, user: null };
+
+console.log(user);
 
 export const authSlice = createSlice({
   name: "auth",

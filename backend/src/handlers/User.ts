@@ -40,8 +40,12 @@ const signup = async (req: Request, res: Response) => {
       { user: newUser },
       process.env.TOKEN_SECRET as jwt.Secret
     );
-    const id = newUser.id;
-    res.json({ userwithtoken, id });
+    res.json({
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      userwithtoken: userwithtoken,
+    });
   } catch (error: unknown) {
     const { message } = error as Error;
     res.status(400).send(message);
@@ -51,12 +55,11 @@ const signup = async (req: Request, res: Response) => {
 const update = async (req: express.Request, res: express.Response) => {
   try {
     const user: User = {
-      email: req.body.email,
-      username: req.body.username,
-      password: req.body.password,
+      email: req.body.email ? req.body.email : null,
+      username: req.body.username ? req.body.email : null,
+      password: req.body.password ? req.body.email : null,
     };
     const updatedUser = await store.update(parseInt(req.params.id), user);
-    console.log(updatedUser);
     res.send(updatedUser);
   } catch (error: unknown) {
     const { message } = error as Error;

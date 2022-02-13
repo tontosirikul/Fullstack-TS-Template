@@ -4,6 +4,7 @@ import { RootState } from "../Store";
 import { register } from "../Store/slices/authSlice";
 import { clearMessage } from "../Store/slices/messageSlice";
 import { useAppThunkDispatch } from "../Store";
+import { useNavigate } from "react-router-dom";
 import {
   Typography,
   Container,
@@ -14,13 +15,13 @@ import {
   Button,
   Link,
   Grid,
+  Alert,
 } from "@mui/material";
-import { couldStartTrivia } from "typescript";
 
-function Signup() {
+function Signup(props: { history: string[] }) {
   const [successful, setSuccessful] = useState(false);
   const { message } = useSelector((state: RootState) => state.message);
-
+  const navigate = useNavigate();
   const dispatch = useAppThunkDispatch();
 
   useEffect(() => {
@@ -48,7 +49,7 @@ function Signup() {
     )
       .unwrap()
       .then(() => {
-        setSuccessful(true);
+        navigate("/signin");
       })
       .catch(() => {
         setSuccessful(false);
@@ -84,6 +85,7 @@ function Signup() {
               fullWidth
               margin="dense"
               autoFocus
+              required
             />
             <TextField
               label="email"
@@ -94,6 +96,7 @@ function Signup() {
               fullWidth
               margin="dense"
               autoFocus
+              required
             />
             <TextField
               label="password"
@@ -105,37 +108,27 @@ function Signup() {
               margin="dense"
               autoFocus
               autoComplete="current-password"
+              required
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox />}
               label="Accept the policy"
               sx={{ mt: 2 }}
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 2, mb: 3 }}
             >
-              Sign in
+              Sign up
             </Button>
+            {message && <Alert severity="error">{message}</Alert>}
             <Grid container justifyContent="flex-end">
               <Link align="center">Already have an account? Sign in</Link>
             </Grid>
           </Box>
         </Box>
-        {message && (
-          <div className="form-group">
-            <div
-              className={
-                successful ? "alert alert-success" : "alert alert-danger"
-              }
-              role="alert"
-            >
-              {message}
-            </div>
-          </div>
-        )}
       </Container>
     </>
   );

@@ -10,9 +10,9 @@
     "build": "yarn tsc",
     "test": "dotenv -e .env.test jest",
     "migrate-test": "dotenv -e .env.test -- yarn run prisma migrate dev --name init",
-    "reset-test": "dotenv -e .env.test -- yarn run prisma migrate reset",
+    "reset-test": "dotenv -e .env.test -- yarn run prisma migrate reset --force",
     "migrate": "dotenv -e .env.development -- yarn run prisma migrate dev --name init",
-    "reset": "dotenv -e .env.development -- yarn run prisma migrate reset",
+    "reset": "dotenv -e .env.development -- yarn run prisma migrate reset --force",
     "start": "dotenv -e .env.development -- nodemon src/index.ts"
   },
   "devDependencies": {

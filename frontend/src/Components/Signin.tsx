@@ -7,16 +7,20 @@ import {
   Checkbox,
   FormControlLabel,
   Button,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState, useAppThunkDispatch } from "../Store";
 import { clearMessage } from "../Store/slices/messageSlice";
 import { login } from "../Store/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
-function Signin() {
+function Signin(props: { history: string[] }) {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
   const { message } = useSelector((state: RootState) => state.message);
+  const navigate = useNavigate();
   const dispatch = useAppThunkDispatch();
   useEffect(() => {
     dispatch(clearMessage());
@@ -37,7 +41,8 @@ function Signin() {
     )
       .unwrap()
       .then((data) => {
-        console.log(data);
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        navigate(`/info/${user.id}`);
       })
       .catch(() => {
         setLoading(false);
@@ -90,18 +95,14 @@ function Signin() {
               autoFocus
               autoComplete="current-password"
             />
-            <FormControlLabel control={<Checkbox />} label="Remember me" />
+            {/* <FormControlLabel control={<Checkbox />} label="Remember me" /> */}
+
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
               Sign in
             </Button>
           </Box>
-          {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
-            </div>
-          )}
+          {loading && <CircularProgress />}
+          {message && <Alert severity="error">{message}</Alert>}
         </Box>
       </Container>
     </>

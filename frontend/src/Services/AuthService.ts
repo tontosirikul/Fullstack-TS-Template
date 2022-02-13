@@ -9,17 +9,30 @@ class AuthService {
           localStorage.setItem("user", JSON.stringify(response.data));
         }
         return response.data;
+      })
+      .catch((error) => {
+        console.log(error.response.data);
       });
   }
   logout() {
     localStorage.removeItem("user");
   }
   register(username: string, email: string, password: string) {
-    return axios.post(API_URL + "signup", {
-      username,
-      email,
-      password,
-    });
+    return axios
+      .post(API_URL + "signup", {
+        username,
+        email,
+        password,
+      })
+      .then((response) => {
+        if (response.data.userwithtoken) {
+          localStorage.setItem("user", JSON.stringify(response.data));
+        }
+        return response.data;
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
   }
 }
 export default new AuthService();
