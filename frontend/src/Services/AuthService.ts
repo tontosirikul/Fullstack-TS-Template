@@ -8,10 +8,13 @@ class AuthService {
         if (response.data.userwithtoken) {
           localStorage.setItem("user", JSON.stringify(response.data));
         }
-        return response.data;
+        return response;
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error.response);
+        throw new Error(
+          error.response.data.message ? error.response.data.message : "Error"
+        );
       });
   }
   logout() {
@@ -28,10 +31,13 @@ class AuthService {
         if (response.data.userwithtoken) {
           localStorage.setItem("user", JSON.stringify(response.data));
         }
-        return response.data;
+        return response;
       })
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error.response);
+        throw new Error(
+          error.response.data.message ? error.response.data.message : "Error"
+        );
       });
   }
 }

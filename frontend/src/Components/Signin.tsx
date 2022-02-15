@@ -9,10 +9,12 @@ import {
   Button,
   Alert,
   CircularProgress,
+  Grid,
+  Link,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState, useAppThunkDispatch } from "../Store";
-import { clearMessage } from "../Store/slices/messageSlice";
+import { clearMessage, setMessage } from "../Store/slices/messageSlice";
 import { login } from "../Store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -32,21 +34,25 @@ function Signin(props: { history: string[] }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    setLoading(true);
-    dispatch(
-      login({
-        email: data.get("email") as string,
-        password: data.get("password") as string,
-      })
-    )
-      .unwrap()
-      .then((data) => {
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        navigate(`/info/${user.id}`);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    if (data.get("email") && data.get("password")) {
+      setLoading(true);
+      dispatch(
+        login({
+          email: data.get("email") as string,
+          password: data.get("password") as string,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          navigate(`/info`);
+          window.location.reload();
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    } else {
+      dispatch(setMessage("Please Fill the form."));
+    }
   };
   return (
     <>
@@ -83,6 +89,7 @@ function Signin(props: { history: string[] }) {
               fullWidth
               margin="dense"
               autoFocus
+              required
             />
             <TextField
               label="password"
@@ -94,15 +101,26 @@ function Signin(props: { history: string[] }) {
               margin="dense"
               autoFocus
               autoComplete="current-password"
+              required
             />
             {/* <FormControlLabel control={<Checkbox />} label="Remember me" /> */}
 
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 2, mb: 3 }}
+            >
               Sign in
             </Button>
           </Box>
           {loading && <CircularProgress />}
           {message && <Alert severity="error">{message}</Alert>}
+          <Grid container justifyContent="center">
+            <Link href="/signup" align="center">
+              Doesn't have an account? Sign up
+            </Link>
+          </Grid>
         </Box>
       </Container>
     </>

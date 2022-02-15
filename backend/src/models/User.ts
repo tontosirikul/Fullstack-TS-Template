@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import e from "express";
 
 dotenv.config();
 
@@ -59,17 +60,26 @@ export class UserStore {
       );
     }
   }
-  async update(id: number, user: User): Promise<User> {
+  async update(
+    id: number,
+    user: { email: string; username: string }
+  ): Promise<User> {
     try {
-      const password = bcrypt.hashSync(
-        user.password + bcrypt_code,
-        parseInt(saltRounds)
-      );
+      // const password = bcrypt.hashSync(
+      //   user.password + bcrypt_code,
+      //   parseInt(saltRounds)
+      // );
+
       const email: string = user.email;
       const username: string = user.username;
+
+      // const result = await prisma.user.update({
+      //   where: { id: Number(id) || undefined },
+      //   data: { email, username, password },
+      // });
       const result = await prisma.user.update({
         where: { id: Number(id) || undefined },
-        data: { email, username, password },
+        data: { email, username },
       });
       return result;
     } catch (err) {
@@ -90,7 +100,7 @@ export class UserStore {
       throw new Error(`Could not delete user ${id}. Error: ${err}`);
     }
   }
-  async authenticate(email: string, password: string): Promise<User | null> {
+  async authenticate(email: string, password: string): Promise<User> {
     try {
       const result = await prisma.user.findUnique({
         where: {
@@ -107,5 +117,35 @@ export class UserStore {
     } catch (error) {
       throw new Error("user not found");
     }
+  }
+  async changepassword(
+    id: number,
+    password: string,
+    newpassword: string
+  ): Promise<User> {
+    // try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) {
+      throw new Error("user not found");
+    }
+    const isValidPassword = bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      throw new Error("password is invalid");
+    }
+
+    const hashedpassword = bcrypt.hashSync(
+      newpassword + bcrypt_code,
+      parseInt(saltRounds)
+    );
+
+    const result = await prisma.user.update({
+      where: { id: Number(id) || undefined },
+      data: { password: hashedpassword },
+    });
+    return result;
   }
 }

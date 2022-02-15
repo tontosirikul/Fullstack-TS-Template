@@ -29,7 +29,7 @@ function App() {
           <Route path="/" element={<AllTasks />} />
           <Route path="/signin" element={<Signin history={[]} />} />
           <Route path="/signup" element={<Signup history={[]} />} />
-          <Route path="/info/:id" element={<Info />} />
+          <Route path="/info/" element={<Info history={[]} />} />
         </Routes>
       </main>
     </>

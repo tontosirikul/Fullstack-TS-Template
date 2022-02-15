@@ -124,8 +124,10 @@ function Signup(props: { history: string[] }) {
               Sign up
             </Button>
             {message && <Alert severity="error">{message}</Alert>}
-            <Grid container justifyContent="flex-end">
-              <Link align="center">Already have an account? Sign in</Link>
+            <Grid container justifyContent="center">
+              <Link href="/signin" align="center">
+                Already have an account? Sign in
+              </Link>
             </Grid>
           </Box>
         </Box>
