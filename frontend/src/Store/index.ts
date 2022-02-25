@@ -2,11 +2,13 @@ import { configureStore, ThunkDispatch, Action } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { authSlice } from "./slices/authSlice";
 import { messageSlice } from "./slices/messageSlice";
+import { taskSlice } from "./slices/taskSlice";
 
 const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
     message: messageSlice.reducer,
+    task: taskSlice.reducer,
   },
   devTools: true,
 });

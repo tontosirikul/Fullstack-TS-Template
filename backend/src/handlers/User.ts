@@ -3,7 +3,6 @@ import { User, UserStore } from "../models/User";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import verifyAuthToken from "../middleware/verifyAuthToken";
-import { compareSync } from "bcrypt";
 
 dotenv.config();
 

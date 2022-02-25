@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import user_routes from "./handlers/User";
 import dotenv from "dotenv";
+import task_routes from "./handlers/Task";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.get("/", (_req: Request, res: Response): void => {
 });
 
 user_routes(app);
+task_routes(app);
 
 app.get("*", (_req: Request, res: Response): void => {
   res.send("No route");
