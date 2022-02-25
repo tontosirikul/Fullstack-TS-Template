@@ -57,6 +57,66 @@ export const getAllTask = createAsyncThunk(
     }
   }
 );
+
+export const editTask = createAsyncThunk(
+  "task/editTask",
+  async (
+    {
+      id,
+      title,
+      description,
+      isDone,
+      userid,
+    }: {
+      id: number;
+      title: string;
+      description: string;
+      isDone: boolean;
+      userid: number;
+    },
+    thunkAPI
+  ) => {
+    try {
+      const data = await TaskService.update({
+        id,
+        title,
+        description,
+        isDone,
+        userid,
+      });
+      return data;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      thunkAPI.dispatch(setMessage(message));
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteTask = createAsyncThunk(
+  "task/deleteTask",
+  async (id: number, thunkAPI) => {
+    try {
+      const data = await TaskService.delete(id);
+      return data;
+    } catch (error: any) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      thunkAPI.dispatch(setMessage(message));
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const initialState: { data: any[]; loading: boolean } = {
   data: [],
   loading: true,
@@ -75,5 +135,25 @@ export const taskSlice = createSlice({
       state.data.push(action.payload);
     });
     builder.addCase(createTask.rejected, (state, action) => {});
+    builder.addCase(editTask.fulfilled, (state, action) => {
+      state.data.map((task) => {
+        if (task.id !== action.payload.id) return task;
+        return {
+          ...task,
+          title: action.payload.title,
+          description: action.payload.description,
+          isDone: action.payload.isDone,
+          AssignedUserId: action.payload.AssignedUserId,
+        };
+      });
+    });
+    builder.addCase(editTask.rejected, (state, action) => {});
+    builder.addCase(deleteTask.fulfilled, (state, action) => {
+      const index = state.data.findIndex(
+        (task) => task.id === action.payload.id
+      );
+      state.data.slice(index, 1);
+    });
+    builder.addCase(deleteTask.rejected, (state, action) => {});
   },
 });

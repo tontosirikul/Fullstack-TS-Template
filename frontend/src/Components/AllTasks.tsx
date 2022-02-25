@@ -1,31 +1,34 @@
 import {
-  Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
   Checkbox,
   Container,
   Paper,
   Table,
   TableContainer,
-  Typography,
   TableCell,
   TableBody,
   TableHead,
   TableRow,
+  Modal,
+  Box,
+  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState, useAppThunkDispatch } from "../Store";
 import { clearMessage } from "../Store/slices/messageSlice";
-import { getAllTask } from "../Store/slices/taskSlice";
+import { deleteTask, getAllTask } from "../Store/slices/taskSlice";
 import CreateTask from "./CreateTask";
+import EditTask from "./EditTask";
 
 function AllTasks() {
   const { user } = useSelector((state: RootState) => state.auth);
-  const { data } = useSelector((state: RootState) => state.task);
+  const { data: tasks } = useSelector((state: RootState) => state.task);
+  const [open, setOpen] = React.useState(false);
+  const [selectedEdit, setSelectedEdit] = React.useState();
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const navigate = useNavigate();
   const dispatch = useAppThunkDispatch();
   useEffect(() => {
@@ -36,6 +39,16 @@ function AllTasks() {
       dispatch(getAllTask(user.id));
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedEdit != null) {
+      handleOpen();
+    }
+  }, [selectedEdit]);
+  const handleSelectEdit = (selectedid: number) => {
+    const task = tasks.find((task) => task.id === selectedid);
+    setSelectedEdit(task);
+  };
 
   return (
     <div>
@@ -53,24 +66,40 @@ function AllTasks() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data &&
-                data.map((d, index) => (
+              {tasks &&
+                tasks.map((task, index) => (
                   <TableRow
-                    key={d.id}
+                    key={task.id}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      <Checkbox checked={d.isDone} />
+                      <Checkbox checked={task.isDone} disabled />
                     </TableCell>
-                    <TableCell>{d.title}</TableCell>
-                    <TableCell>{d.description}</TableCell>
+                    <TableCell>{task.title}</TableCell>
+                    <TableCell>{task.description}</TableCell>
                     <TableCell align="center">
-                      <Button variant="contained" color="success">
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => {
+                          handleSelectEdit(task.id);
+                        }}
+                      >
                         Edit
                       </Button>
                     </TableCell>
                     <TableCell align="center">
-                      <Button variant="contained" color="error">
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                          dispatch(deleteTask(task.id))
+                            .unwrap()
+                            .then(() => {
+                              dispatch(getAllTask(user.id));
+                            });
+                        }}
+                      >
                         Delete
                       </Button>
                     </TableCell>
@@ -80,6 +109,15 @@ function AllTasks() {
           </Table>
         </TableContainer>
       </Container>
+      {selectedEdit && (
+        <EditTask
+          open={open}
+          handleClose={handleClose}
+          selectedEdit={selectedEdit}
+          setSelectedEdit={setSelectedEdit}
+          userid={user.id}
+        />
+      )}
     </div>
   );
 }

@@ -107,7 +107,11 @@ class TaskService {
   }
   delete(id: number) {
     return axios
-      .delete(API_URL + `tasks/${id}`)
+      .delete(API_URL + `tasks/${id}`, {
+        headers: {
+          Authorization: `${AuthHeader().Authorization}`,
+        },
+      })
       .then((response) => {
         return response.data;
       })
