@@ -84,6 +84,7 @@ export const editTask = createAsyncThunk(
         isDone,
         userid,
       });
+      console.log(data);
       return data;
     } catch (error: any) {
       const message =
@@ -136,7 +137,7 @@ export const taskSlice = createSlice({
     });
     builder.addCase(createTask.rejected, (state, action) => {});
     builder.addCase(editTask.fulfilled, (state, action) => {
-      state.data.map((task) => {
+      const edited_state = state.data.map((task) => {
         if (task.id !== action.payload.id) return task;
         return {
           ...task,
@@ -146,13 +147,12 @@ export const taskSlice = createSlice({
           AssignedUserId: action.payload.AssignedUserId,
         };
       });
+      state.data = edited_state;
     });
     builder.addCase(editTask.rejected, (state, action) => {});
     builder.addCase(deleteTask.fulfilled, (state, action) => {
-      const index = state.data.findIndex(
-        (task) => task.id === action.payload.id
-      );
-      state.data.slice(index, 1);
+      const { id } = action.payload;
+      state.data = state.data.filter((item) => item.id !== id);
     });
     builder.addCase(deleteTask.rejected, (state, action) => {});
   },

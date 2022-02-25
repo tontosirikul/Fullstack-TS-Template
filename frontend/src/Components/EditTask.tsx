@@ -51,7 +51,7 @@ function EditTask(props: {
     )
       .unwrap()
       .then(() => {
-        dispatch(getAllTask(props.userid));
+        // dispatch(getAllTask(props.userid));
         props.handleClose();
       });
   };

@@ -95,9 +95,7 @@ function AllTasks() {
                         onClick={() => {
                           dispatch(deleteTask(task.id))
                             .unwrap()
-                            .then(() => {
-                              dispatch(getAllTask(user.id));
-                            });
+                            .then(() => {});
                         }}
                       >
                         Delete
